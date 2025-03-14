@@ -1,0 +1,222 @@
+{% comment %}
+  Renders assesment product card
+
+  Accepts:
+  - card_product: {Object} Product Liquid object (optional)
+
+  Usage:
+  {% render 'card-domaine-product-product' %}
+{% endcomment %}
+
+{{ 'component-card-domaine-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{%-liquid 
+  unless card_product.has_only_default_variant
+    assign current_variant = card_product.variants[0]
+    assign compare_at_price = current_variant.compare_at_price | default: current_variant.price
+    assign on_sale = false
+    
+    if compare_at_price > current_variant.price
+      assign on_sale = true
+    endif
+
+    
+  endunless
+-%}
+
+<div 
+  class="
+    product-card
+    border-1
+    border-[#E8E8E8]
+    border-solid
+    flex
+    flex-col
+    gap-[13px]
+    py-9
+    px-11
+    max-w-[370px]
+  "
+  js-card-product="container"
+>
+  <div 
+    class="
+      product-card__thumbnail-container
+      aspect-1/1
+      border-1
+      border-[#E8E8E8]
+      border-solid
+      rounded-[10px]
+      px-8
+      py-8
+      relative
+    "
+    js-card-product="thumbnailContainer"
+  >
+    <a 
+      class="aspect-1/1" 
+      href="{{ card_product.url }}"
+      js-card-product-link
+    >
+      {% if on_sale %}
+        <div 
+          class="
+            product-card__sale-badge
+            absolute
+            text-[16px]
+            leading-[18px]
+            text-[#FF0000]
+            py-[7px]
+            px-[13px]
+            border-1
+            border-solid
+            border-color-[#FF0000]
+            rounded-full
+            text-center
+            w-auto
+            inline-block
+            z-3
+          "
+          js-card-product="sale"
+        >
+          {{- 'products.product.on_sale' | t -}}
+        </div>
+      {% endif %}
+
+      <img
+        srcset="
+          {%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+          {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+          {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+          {%- if card_product.featured_media.width >= 720 -%}{{ card_product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+          {%- if card_product.featured_media.width >= 940 -%}{{ card_product.featured_media | image_url: width: 940 }} 940w,{%- endif -%}
+          {%- if card_product.featured_media.width >= 1066 -%}{{ card_product.featured_media | image_url: width: 1066 }} 1066w,{%- endif -%}
+          {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}
+        "
+        src="{{ card_product.featured_media | image_url: width: 533 }}"
+        sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+        alt="{{ card_product.featured_media.alt | escape }}"
+        class="motion-reduce"
+        loading="lazy"
+        width="{{ card_product.featured_media.width }}"
+        height="{{ card_product.featured_media.height }}"
+        js-card-product="mainImage"
+      >
+
+      <img
+        srcset="
+          {%- if card_product.media[1].width >= 165 -%}{{ card_product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
+          {%- if card_product.media[1].width >= 360 -%}{{ card_product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
+          {%- if card_product.media[1].width >= 533 -%}{{ card_product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}
+          {%- if card_product.media[1].width >= 720 -%}{{ card_product.media[1] | image_url: width: 720 }} 720w,{%- endif -%}
+          {%- if card_product.media[1].width >= 940 -%}{{ card_product.media[1] | image_url: width: 940 }} 940w,{%- endif -%}
+          {%- if card_product.media[1].width >= 1066 -%}{{ card_product.media[1] | image_url: width: 1066 }} 1066w,{%- endif -%}
+          {{ card_product.media[1] | image_url }} {{ card_product.media[1].width }}
+        "
+        src="{{ card_product.media[1] | image_url: width: 533 }}"
+        sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
+        alt="{{ card_product.media[1].alt | escape }}"
+        class="
+          motion-reduce
+          absolute
+          top-0
+          left-0
+          opacity-0
+          h-[100%]
+          object-contain
+        "
+        loading="lazy"
+        width="{{ card_product.media[1].width }}"
+        height="{{ card_product.media[1].height }}"
+        js-card-product="secondaryImage"
+      >
+    </a>
+  </div>
+
+  {%- unless product.has_only_default_variant -%}
+    <div 
+      class="product-card__swatches flex gap-[6px]"
+      js-card-product="swatches"
+    >
+      {%- assign first_swatch = true -%}
+
+      {%- for variant in card_product.variants -%}
+        {%- assign sanitized_variant_name = variant.title | downcase -%}
+        {%- assign sanitized_second_image_name  = sanitized_variant_name | append: '-secondary' -%}
+        {%- assign variant_image = variant.image.src | img_url: 'master' -%}
+        {%- assign variant_second_image = variant_image | replace: sanitized_variant_name, sanitized_second_image_name -%}
+        {%- assign value = variant.title -%}
+        {%- assign classes = '' -%}
+
+        {%- if first_swatch -%}
+          {%- assign classes = classes | append: ' is-active' -%}
+          {%- assign first_swatch = false -%}
+        {%- endif -%}
+      
+        <button
+          class="
+            product-card__swatch
+            rounded-full
+            w-[24px]
+            h-[24px]
+            overflow-hidden
+            text-transparent
+            leading-[0]
+            bg-{{- sanitized_variant_name -}}
+            {{ classes }}
+          "
+          title="{{ value }}"
+          type="button"
+          data-href="{{ card_product.url }}?variant={{ variant.id | url_encode }}"
+          data-value="{{ value }}"
+          data-variant-image="{{ variant_image }}"
+          data-variant-second-image="{{ variant_second_image }}"
+          data-variant-id="{{ variant.id }}"
+          data-variant-price="{{ variant.price }}"
+          data-variant-compare-price="{{ variant.compare_at_price }}"
+          js-card-product="swatch"
+        >
+          {{- variant.title -}}
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endunless -%}
+  <div 
+    class="
+      product-card__footer
+      flex
+      flex-col
+      gap-[6px]
+    "
+  >
+    {%- unless card_product.vendor == blank -%}
+      <div class="product-card__vendor text-[14px] leading-[16px]">
+        {{- card_product.vendor -}}
+      </div>
+    {%- endunless -%}
+
+    <h3 
+      class="
+        product-card__title
+        text-[16px]
+        leading-[18px]
+        font-medium
+      "
+    >
+      <a 
+        href="{{ card_product.url }}"
+        js-card-product-link
+      >
+        {{ card_product.title }}
+      </a>
+    </h3>
+
+    <div 
+      class="product-card__price"
+      js-card-product="price"
+    >
+      {% render 'price', product: card_product, price_class: '', show_compare_at_price: true %}
+    </div>
+  </div>
+</div>

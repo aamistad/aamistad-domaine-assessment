@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+.product-card {
+ font-family: roboto, arial, sans-serif;
+}
+
+.product-card img {
+  display: block;
+  transition: opacity 0.1s ease-in-out;
+}
+
+/* Only included because assets were not consistent in size. Assumptionis assets will be consistent in size */
+.product-card__thumbnail-container {
+  max-height: 311px;
+}
+
+.product-card__thumbnail-container:hover img + img {
+  opacity: 1;
+}
+
+
+.product-card__title {
+  font-weight: 500;
+  color: #0A4874;
+}
+
+.product-card__swatch {
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.product-card__swatch::before {
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 100%;
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.product-card__swatch:hover,
+.product-card__swatch.is-active {
+  border-color: black;
+}
+
+/* With the assumption that these are the only colors available */
+.product-card__swatch:hover::before,
+.product-card__swatch.is-active::before {
+  border-color: white;
+}
+
+.product-card__swatch.bg-blue::before {
+ background-color: blue;
+}
+
+.product-card__swatch.bg-green::before {
+  background-color: green
+}
+
+.product-card__swatch.bg-navy::before {
+  background-color: navy;
+}
+
+.product-card__swatch.bg-orange::before {
+  background-color: orange
+} 
+
+.product-card__swatch.bg-pink::before {
+  background-color: pink;
+}
+
+.product-card__swatch.bg-yellow::before {
+  background-color: yellow;
+}

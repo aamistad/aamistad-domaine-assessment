@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.14",
+    "tailwindcss": "^4.0.14"
+  },
+  "scripts": {
+    "tw": "npx @tailwindcss/cli -i ./styles/components/card-domaine-product.css -o ./assets/component-card-domaine-product.css --watch"
+  }
+}
