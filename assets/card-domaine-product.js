@@ -151,9 +151,13 @@ function updateCardPrice(swatch) {
 function handleSaleBadge(card, saleStatus) {
   const saleBadge = card.querySelector(selectors.sale);
 
+  if(!saleBadge) {
+    return;
+  }
+
   if(!saleStatus) {
     saleBadge.style.display = 'none';
-    return
+    return;
   }
 
   saleBadge.style.display = 'block';
